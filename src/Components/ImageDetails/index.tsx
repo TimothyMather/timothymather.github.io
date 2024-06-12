@@ -3,7 +3,7 @@ import { Image } from "../../Models/image";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 
 const ImageDetails = ({ image }: { image: Image }) => (
-    <Card sx={{ maxWidth: "800px", height: "50%", marginLeft: "30%", marginTop: "10%" }}>
+    <Card>
         {image && (
             <CardMedia
                 component="img"

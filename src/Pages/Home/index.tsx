@@ -62,15 +62,18 @@ const Home = () => {
 
     return (
         <Grid2 container spacing={2}>
-            <Modal
-                open={open}
-                onClose={handleClose}
-            >
-                <S.ModalContent>
-                    {viewingImage && ImageDetails({ image: viewingImage })}
-                </S.ModalContent>
-            </Modal>
-            <Grid2 xs={12} mdOffset={3}>
+            <Grid2 xs={12} xsOffset={2}>
+                <Modal
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%"}}
+                    open={open}
+                    onClose={handleClose}
+                >
+                    <S.ModalContent>
+                        {viewingImage && ImageDetails({ image: viewingImage })}
+                    </S.ModalContent>
+                </Modal>
+            </Grid2>
+            <Grid2 xs={12} xsOffset={2}>
                 <FormControl>
                     <S.SearchRow>
                         <ButtonGroup variant="contained" aria-label="Basic button group">
