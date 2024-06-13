@@ -1,11 +1,13 @@
+import { ImageListItem, Modal } from "@mui/material";
 import styled from "styled-components";
+import theme from "../../Theme/index";
 
 export const Container = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 50%;
-    margin-left: 25%;
+    margin: 10px;
 
     img {
         object-fit: contain;
@@ -13,11 +15,19 @@ export const Container = styled.div`
     }
 `;
 
+export const Row = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 export const SearchRow = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    height: 100px;
+    align-self: center;
+    justify-self: center;
+    height: 150px;
     width: 100%;
     position: relative;
     top: 30px;
@@ -28,12 +38,24 @@ export const SearchRow = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  position: 'absolute';
-  top: '50%';
-  left: '50%';
-  transform: 'translate(-50%, -50%)';
-  width: 400;
-  border: '2px solid #000';
-  box-shadow: 24;
-  padding: 4;
-`
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    width: 80%;
+    @media(max-width: 500px) {
+        width: 100%;
+        height: 100%;
+    }
+`;
+
+export const StyledModal = styled(Modal)`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const Image = styled(ImageListItem)`
+    background-color: ${theme.palette.secondary.main};
+`;

@@ -1,34 +1,43 @@
 import React, { useEffect } from "react";
 import * as S from "./index.styles";
 import ImagePreview from "../../Components/ImagePreview";
-import { ImageList, ImageListItemBar, ImageListItem, TextField, Button, FormControl, ButtonGroup, Modal } from "@mui/material";
+import { ImageList, ImageListItemBar, TextField, Button, FormControl, ButtonGroup, Card } from "@mui/material";
 import imageData from "../../images.json";
 import { Image } from "../../Models/image";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import ImageDetails from "../../Components/ImageDetails";
+import ImageCard from "../../Components/ImageDetails";
 
 const Home = () => {
     const images: Image[] = imageData.images;
     const [filteredImages, setFilteredImages] = React.useState<Image[]>(images);
     const [search, setSearch] = React.useState<string>("");
-    const [tag, setTag] = React.useState<string>("");
+    const [tags, setTags] = React.useState<string[]>([]);
     const [viewingImage, setViewingImage] = React.useState<Image | null>(null);
     const [open, setOpen] = React.useState(false);
 
     const getTagList = () => {
-        const tags: string[] = [];
+        const allTags: string[] = [];
         images.forEach((image: Image) => {
             image.tags.forEach((tag: string) => {
-                if (!tags.includes(tag)) {
-                    tags.push(tag);
+                if (!allTags.includes(tag)) {
+                    allTags.push(tag);
                 }
             });
         });
-        return tags;
+        return allTags;
     }
+
+    const addOrRemoveTag = (imageTag: string) => {
+        if (tags.includes(imageTag)) {
+            setTags([...tags.filter(tag => tag !== imageTag)])
+        } else {
+            setTags([...tags, imageTag])
+        }
+    }
+
     const resetImages = () => {
         setSearch("");
-        setTag("");
+        setTags([]);
         setFilteredImages(images);
     }
 
@@ -43,37 +52,38 @@ const Home = () => {
     }
 
     useEffect(() => {
-        if (search === "" && tag === "") {
-            setFilteredImages(images);
-            return;
-        }
-
         setFilteredImages(images.filter((image: Image) => {
-            if (search === "") {
-                return image.tags.includes(tag);
+            // TODO: Add back tag filtering
+            let tagInList = false
+            if (search === "" && tags.length === 0) {
+                return image.tags;
             }
-            if (tag === "") {
+            if (tags.length === 0) {
                 return image.title.toLowerCase().includes(search.toLowerCase());
+            } else {
+                tagInList = !!image.tags.find(tag => tags.includes(tag));
             }
-            return image.title.toLowerCase().includes(search.toLowerCase()) && image.tags.includes(tag);
+            console.log(tagInList);
+            return image.title.toLowerCase().includes(search.toLowerCase()) && tagInList;
         }));
-    }, [images, search, tag]);
+    }, [images, search, tags]);
 
 
     return (
-        <Grid2 container spacing={2}>
-            <Grid2 xs={12} xsOffset={2}>
-                <Modal
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%"}}
+        <S.Container>
+            <Grid2>
+                <S.StyledModal
                     open={open}
                     onClose={handleClose}
                 >
                     <S.ModalContent>
-                        {viewingImage && ImageDetails({ image: viewingImage })}
+                        {/* <Icon muiName" /> */}
+                        {viewingImage && <ImageCard image={viewingImage} />}
+                        <Button sx={{ marginBottom: "20px", width: "75%" }} onClick={handleClose} variant="contained">Back</Button>
                     </S.ModalContent>
-                </Modal>
+                </S.StyledModal>
             </Grid2>
-            <Grid2 xs={12} xsOffset={2}>
+            <S.Row>
                 <FormControl>
                     <S.SearchRow>
                         <ButtonGroup variant="contained" aria-label="Basic button group">
@@ -82,8 +92,8 @@ const Home = () => {
                                     <Button
                                         key={imageTag}
                                         value={imageTag}
-                                        variant={imageTag === tag ? "contained" : "outlined"}
-                                        onClick={() => setTag(imageTag)}
+                                        variant={tags.includes(imageTag) ? "contained" : "outlined"}
+                                        onClick={() => addOrRemoveTag(imageTag)}
                                     >
                                         {imageTag}
                                     </Button>
@@ -94,25 +104,31 @@ const Home = () => {
                         <TextField onChange={(e) => setSearch(e.target.value)} variant="outlined" label="Search" />
                     </S.SearchRow>
                 </FormControl>
+            </S.Row>
+            <S.Row>
                 <ImageList
-                    sx={{ width: "1016px", height: "100%" }}
-                    rowHeight={340}
                     variant="quilted"
-                    cols={2}
                     gap={8}
                 >
                     {filteredImages.map((image: Image) => {
                         return (
-                            <ImageListItem key={image.path} onClick={() => handleOpen(image)}>
-                                <ImagePreview {...image} />
-                                <ImageListItemBar title={image.title} subtitle={image.date} />
-                            </ImageListItem>
+                            <Card sx={{cursor: "pointer"}}>
+                                <S.Image key={image.path} onClick={() => handleOpen(image)}>
+                                    <ImagePreview {...image} />
+                                    <ImageListItemBar
+                                        sx={{ padding: "5px" }}
+                                        title={image.title}
+                                        subtitle={image.date}
+                                        position="below"
+                                    />
+                                </S.Image>
+                            </Card>
                         );
 
                     })}
                 </ImageList>
-            </Grid2>
-        </Grid2>
+            </S.Row>
+        </S.Container>
     );
 };
 
